@@ -1,0 +1,33 @@
+create calendar --name TestCal --timezone America/New_York
+use calendar --name TestCal
+create event "Test Event" from 2025-05-05T10:00 to 2025-05-05T11:00
+create event "Duplicate Test" from 2025-05-05T10:00 to 2025-05-05T11:00
+create event "Duplicate Test" from 2025-05-05T10:00 to 2025-05-05T11:00
+this is not a valid command
+create calendar --name TestCal --timezone America/New_York
+create calendar --name InvalidCal --timezone Invalid/Timezone
+create calendar --timezone America/New_York
+use calendar --name NonExistentCalendar
+use calendar TestCal
+edit calendar --name NonExistent --property name NewName
+edit calendar --name TestCal --property invalidProperty value
+edit calendar --property name NewName
+copy event "NonExistent" on 2025-05-05T10:00 --target TestCal to 2025-05-10T14:00
+copy event "Test Event" on 2025-05-05T10:00 to 2025-05-10T14:00
+copy events on 2025-05-05 to 2025-05-10
+copy events between 2025-05-05 and 2025-05-10 to 2025-06-01
+print events on 2025-13-45
+edit event subject "NonExistent Event" from 2025-05-05T10:00 with "New Subject"
+show status on invalid-date-format
+create event from 2025-05-05T10:00 to 2025-05-05T11:00
+export cal
+create event "Missing Time" from 2025-05-05 to 2025-05-05T11:00
+print events from 2025-05-05T10:00
+create event "Invalid Series" from 2025-05-05T10:00 to 2025-05-05T11:00 repeats XYZ for 5 times
+create event "No Weekdays" from 2025-05-05T10:00 to 2025-05-05T11:00 repeats for 5 times
+edit event invalidProperty Meeting from 2025-05-05T10:00 with Value
+edit something subject Meeting from 2025-05-05T10:00 with New
+create event "End Before Start" from 2025-05-05T11:00 to 2025-05-05T10:00
+create event "Series Zero" from 2025-05-05T10:00 to 2025-05-05T11:00 repeats M for 0 times
+edit calendar --name TestCal --property timezone Invalid/Zone
+exit
