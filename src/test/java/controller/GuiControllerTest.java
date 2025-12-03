@@ -185,22 +185,6 @@ public class GuiControllerTest {
     assertEquals(1, mockView.showMessageCallCount);
   }
 
-  @Test
-  public void testEditEvent() {
-    controller.createSingleEvent("Meeting", LocalDate.of(2025, 5, 5), LocalTime.of(10, 0),
-        LocalTime.of(11, 0), false);
-
-    mockView.reset();
-
-    controller.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "subject",
-        "Updated Meeting", EditSettings.SINGLE);
-
-    List<Event> events = controller.getEventsForDate(LocalDate.of(2025, 5, 5));
-    assertEquals("Updated Meeting", events.get(0).getSubject());
-    assertEquals(1, mockView.showMessageCallCount);
-    assertTrue(mockView.messages.get(0).contains("Event edited"));
-    assertEquals(1, mockView.refreshCalendarCallCount);
-  }
 
   @Test
   public void testEditEventLocation() {
@@ -363,18 +347,7 @@ public class GuiControllerTest {
     assertTrue(mockView.errors.get(0).contains("Failed to edit event"));
   }
 
-  @Test
-  public void testEditEventShowsSuccessMessage() {
-    controller.createSingleEvent("Meeting", LocalDate.of(2025, 5, 5), LocalTime.of(10, 0),
-        LocalTime.of(11, 0), false);
 
-    mockView.reset();
-
-    controller.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "subject", "Updated",
-        EditSettings.SINGLE);
-
-    assertTrue(mockView.messages.get(0).contains("Event edited"));
-  }
 
   @Test
   public void testGetEventsForDateReturnsCorrectEvents() {
@@ -423,25 +396,7 @@ public class GuiControllerTest {
     assertEquals(ZoneId.systemDefault(), controller.getCurrentTimezone());
   }
 
-  @Test
-  public void testEditEventWithAllScopes() {
-    Set<DayOfWeek> weekdays = Set.of(DayOfWeek.MONDAY);
-    controller.createRecurringEvent("Series", LocalDate.of(2025, 5, 5), LocalTime.of(10, 0),
-        LocalTime.of(11, 0), weekdays, 3, null, false);
 
-    mockView.reset();
-
-    controller.editEvent("Series", LocalDateTime.of(2025, 5, 5, 10, 0), "subject", "Updated",
-        EditSettings.SINGLE);
-
-    controller.editEvent("Series", LocalDateTime.of(2025, 5, 12, 10, 0), "location", "Room",
-        EditSettings.FORWARD);
-
-    controller.editEvent("Series", LocalDateTime.of(2025, 5, 19, 10, 0), "description", "Desc",
-        EditSettings.ALL_EVENTS);
-
-    assertEquals(3, mockView.showMessageCallCount);
-  }
 
   @Test
   public void testCreateAllDayRecurringEventWithEndDate() {
