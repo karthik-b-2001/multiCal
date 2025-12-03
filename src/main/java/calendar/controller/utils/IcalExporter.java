@@ -100,7 +100,7 @@ public class IcalExporter implements Exporter {
    * Escapes special characters for iCal format.
    */
   private String escapeText(String text) {
-    if (text == null || text.isEmpty()) {
+    if (text.isEmpty()) {
       return "";
     }
     return text.replace("\\", "\\\\")

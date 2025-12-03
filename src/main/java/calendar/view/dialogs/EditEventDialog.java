@@ -24,7 +24,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
- * Dialog for editing an existing event.
+ * Dialog for editing an existing calendar event.
+ * Allows modification of event properties such as name, time, location, and description.
  */
 public class EditEventDialog extends JDialog {
 
@@ -36,7 +37,7 @@ public class EditEventDialog extends JDialog {
   private JComboBox<Integer> startMinuteCombo;
   private JComboBox<Integer> endHourCombo;
   private JComboBox<Integer> endMinuteCombo;
-  private JTextField locationField;
+  private JComboBox<String> locationCombo;
   private JTextArea descriptionArea;
   private JComboBox<String> scopeCombo;
 
@@ -44,8 +45,8 @@ public class EditEventDialog extends JDialog {
    * Constructs the EditEventDialog.
    *
    * @param parent     the parent frame
-   * @param event      the event to edit
-   * @param controller the GUI controller
+   * @param event      the event to be edited
+   * @param controller the GUI controller for handling event edits
    */
   public EditEventDialog(JFrame parent, Event event, GuiController controller) {
     super(parent, "Edit Event", true);
@@ -81,8 +82,7 @@ public class EditEventDialog extends JDialog {
       panel.add(Box.createVerticalStrut(10));
     }
 
-    panel.add(createLabelFieldPair("Location:",
-        locationField = new JTextField(event.getLocation().orElse(""))));
+    panel.add(createLocationPanel());
 
     JLabel descLabel = new JLabel("Description:");
     panel.add(descLabel);
@@ -101,6 +101,30 @@ public class EditEventDialog extends JDialog {
           new String[]{"This event only", "This and future events", "All events in series"});
       panel.add(scopeCombo);
     }
+
+    return panel;
+  }
+
+  private JPanel createLocationPanel() {
+    JPanel panel = new JPanel(new BorderLayout(5, 5));
+    panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+
+    JLabel label = new JLabel("Location:");
+    label.setPreferredSize(new Dimension(120, 25));
+    panel.add(label, BorderLayout.WEST);
+
+    locationCombo = new JComboBox<>(new String[] {"", "Physical", "Online"});
+
+    String existingLocation = event.getLocation().orElse("");
+    if (existingLocation.equalsIgnoreCase("Physical")) {
+      locationCombo.setSelectedItem("Physical");
+    } else if (existingLocation.equalsIgnoreCase("Online")) {
+      locationCombo.setSelectedItem("Online");
+    } else {
+      locationCombo.setSelectedIndex(0);
+    }
+
+    panel.add(locationCombo, BorderLayout.CENTER);
 
     return panel;
   }
@@ -227,7 +251,7 @@ public class EditEventDialog extends JDialog {
     }
 
     if (success) {
-      String newLocation = locationField.getText().trim();
+      String newLocation = (String) locationCombo.getSelectedItem();
       String originalLocation = event.getLocation().orElse("");
       if (!newLocation.equals(originalLocation)) {
         if (!editEventProperty(currentSubject, currentStartDateTime, "location",
@@ -249,8 +273,13 @@ public class EditEventDialog extends JDialog {
     }
 
     if (success) {
+      JOptionPane.showMessageDialog(this,
+          "Event saved successfully",
+          "Success",
+          JOptionPane.INFORMATION_MESSAGE);
       dispose();
     }
+
   }
 
   private boolean editEventProperty(String subject, LocalDateTime startDateTime,

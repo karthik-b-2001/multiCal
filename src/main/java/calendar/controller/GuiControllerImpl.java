@@ -140,7 +140,6 @@ public class GuiControllerImpl implements GuiController {
 
       calendar.editEvent(subject, startDateTime, property, newValue, scope);
       view.refreshCalendar();
-      view.showMessage("Event edited: " + subject);
     } catch (Exception e) {
       view.showError("Failed to edit event: " + e.getMessage());
     }
