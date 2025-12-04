@@ -19,6 +19,7 @@ import calendar.controller.commands.ShowStatusCommand;
 import calendar.controller.commands.UseCalendarCommand;
 import calendar.controller.utils.CommandParserImpl;
 import calendar.model.EventStatus;
+import calendar.model.LocationType;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 import org.junit.Assert;
@@ -214,7 +215,7 @@ public class CommandParserTest {
   @Test
   public void testParseEditSeriesAll() {
     Command cmd = parser.parse(
-        "edit series location Review from 2025-05-05T14:00 with \"Room 101\"");
+        "edit series location Review from 2025-05-05T14:00 with physical");
     assertNotNull(cmd);
     assertTrue(cmd instanceof EditEventCommand);
   }
@@ -248,10 +249,11 @@ public class CommandParserTest {
   @Test
   public void testParseEditLocation() {
     Command cmd = parser.parse(
-        "edit series location Meeting from 2025-05-05T10:00 with \"Room 202\"");
+        "edit series location Meeting from 2025-05-05T10:00 with physical");
     assertNotNull(cmd);
     assertTrue(cmd instanceof EditEventCommand);
   }
+
 
   @Test
   public void testParseEditStatus() {
@@ -537,7 +539,7 @@ public class CommandParserTest {
     Command cmd2 = parser.parse(
         "edit event description M from 2025-05-05T10:00 with Desc");
     Command cmd3 = parser.parse(
-        "edit event location M from 2025-05-05T10:00 with Loc");
+        "edit event location M from 2025-05-05T10:00 with physical");
     assertNotNull(cmd1);
     assertNotNull(cmd2);
     assertNotNull(cmd3);
@@ -976,6 +978,107 @@ public class CommandParserTest {
         "copy event \"\" on 2025-05-05T10:00 --target Work to 2025-05-10T14:00");
     assertNotNull(cmd);
     assertTrue(cmd instanceof CopyEventCommand);
+  }
+
+  @Test
+  public void testEditLocationPhysicalActualValueCheck() {
+    MockCalendarManager mockManager = new MockCalendarManager();
+    MockView mockView = new MockView();
+
+    String commands = "edit event location Meeting from 2025-05-05T10:00 "
+        + "with physical\nexit\n";
+    Scanner scanner = new Scanner(commands);
+
+    new CalendarController(mockManager, mockView, scanner, false).run();
+
+    Assert.assertEquals(LocationType.PHYSICAL,
+        mockManager.getMockCalendar().lastEditedNewValue);
+  }
+
+  @Test
+  public void testEditLocationOnlineActualValueCheck() {
+    MockCalendarManager mockManager = new MockCalendarManager();
+    MockView mockView = new MockView();
+
+    String commands = "edit event location Meeting from 2025-05-05T10:00 "
+        + "with online\nexit\n";
+    Scanner scanner = new Scanner(commands);
+
+    new CalendarController(mockManager, mockView, scanner, false).run();
+
+    Assert.assertEquals(LocationType.ONLINE,
+        mockManager.getMockCalendar().lastEditedNewValue);
+  }
+
+  @Test
+  public void testEditLocationNoneActualValueCheck() {
+    MockCalendarManager mockManager = new MockCalendarManager();
+    MockView mockView = new MockView();
+
+    String commands = "edit event location Meeting from 2025-05-05T10:00 "
+        + "with none\nexit\n";
+    Scanner scanner = new Scanner(commands);
+
+    new CalendarController(mockManager, mockView, scanner, false).run();
+
+    Assert.assertEquals(LocationType.NONE,
+        mockManager.getMockCalendar().lastEditedNewValue);
+  }
+
+
+  @Test
+  public void testParseLocationTypePhysical() {
+    Command cmd = parser.parse(
+        "edit event location Meeting from 2025-05-05T10:00 with physical");
+    assertNotNull(cmd);
+    assertTrue(cmd instanceof EditEventCommand);
+  }
+
+  @Test
+  public void testParseLocationTypePhysicalUpperCase() {
+    Command cmd = parser.parse(
+        "edit event location Meeting from 2025-05-05T10:00 with PHYSICAL");
+    assertNotNull(cmd);
+    assertTrue(cmd instanceof EditEventCommand);
+  }
+
+  @Test
+  public void testParseLocationTypeOnline() {
+    Command cmd = parser.parse(
+        "edit event location Meeting from 2025-05-05T10:00 with online");
+    assertNotNull(cmd);
+    assertTrue(cmd instanceof EditEventCommand);
+  }
+
+  @Test
+  public void testParseLocationTypeOnlineMixedCase() {
+    Command cmd = parser.parse(
+        "edit event location Meeting from 2025-05-05T10:00 with OnLiNe");
+    assertNotNull(cmd);
+    assertTrue(cmd instanceof EditEventCommand);
+  }
+
+  @Test
+  public void testParseLocationTypeNone() {
+    Command cmd = parser.parse(
+        "edit event location Meeting from 2025-05-05T10:00 with none");
+    assertNotNull(cmd);
+    assertTrue(cmd instanceof EditEventCommand);
+  }
+
+  @Test
+  public void testEditLocationInvalidDefaultsToNone() {
+    MockCalendarManager mockManager = new MockCalendarManager();
+    MockView mockView = new MockView();
+
+    String commands = "edit event location Meeting from 2025-05-05T10:00 "
+        + "with \"Room 101\"\nexit\n";
+    Scanner scanner = new Scanner(commands);
+
+    new CalendarController(mockManager, mockView, scanner, false).run();
+
+    Assert.assertEquals(LocationType.NONE,
+        mockManager.getMockCalendar().lastEditedNewValue);
   }
 
 }

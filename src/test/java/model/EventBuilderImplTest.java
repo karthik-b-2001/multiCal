@@ -10,6 +10,7 @@ import calendar.model.CalendarImpl;
 import calendar.model.EditSettings;
 import calendar.model.Event;
 import calendar.model.EventStatus;
+import calendar.model.LocationType;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -204,8 +205,8 @@ public class EventBuilderImplTest {
     calendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
         LocalDateTime.of(2025, 5, 5, 11, 0), false);
 
-    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location", "Room 101",
-        EditSettings.SINGLE);
+    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        LocationType.PHYSICAL, EditSettings.SINGLE);
 
     Calendar calendar2 = new CalendarImpl("Other", ZoneId.of("America/New_York"));
     calendar2.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
@@ -325,8 +326,8 @@ public class EventBuilderImplTest {
     calendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
         LocalDateTime.of(2025, 5, 5, 11, 0), false);
 
-    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location", "Room 101",
-        EditSettings.SINGLE);
+    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        LocationType.PHYSICAL, EditSettings.SINGLE);
 
     Event original = calendar.getAllEvents().get(0);
     Event copy = original.copyWithNewTimes(LocalDateTime.of(2025, 5, 5, 14, 0),
@@ -417,8 +418,8 @@ public class EventBuilderImplTest {
 
     calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "description", "Important",
         EditSettings.SINGLE);
-    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location", "Room 101",
-        EditSettings.SINGLE);
+    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        LocationType.PHYSICAL, EditSettings.SINGLE);
     calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "status",
         EventStatus.PRIVATE, EditSettings.SINGLE);
 
@@ -467,6 +468,63 @@ public class EventBuilderImplTest {
     Event copy = original.copyWithSeriesId("NEW_SID");
 
     assertFalse(original == copy);
+  }
+
+  @Test
+  public void testLocationTypeNoneDisplayValue() {
+    assertEquals("", LocationType.NONE.getDisplayValue());
+  }
+
+  @Test
+  public void testLocationTypePhysicalDisplayValue() {
+    assertEquals("Physical", LocationType.PHYSICAL.getDisplayValue());
+  }
+
+  @Test
+  public void testLocationTypeOnlineDisplayValue() {
+    assertEquals("Online", LocationType.ONLINE.getDisplayValue());
+  }
+
+  @Test
+  public void testLocationTypeFromDisplayValuePhysical() {
+    assertEquals(LocationType.PHYSICAL, LocationType.fromDisplayValue("Physical"));
+  }
+
+  @Test
+  public void testLocationTypeFromDisplayValuePhysicalLowerCase() {
+    assertEquals(LocationType.PHYSICAL, LocationType.fromDisplayValue("physical"));
+  }
+
+  @Test
+  public void testLocationTypeFromDisplayValueOnline() {
+    assertEquals(LocationType.ONLINE, LocationType.fromDisplayValue("Online"));
+  }
+
+  @Test
+  public void testLocationTypeFromDisplayValueOnlineLowerCase() {
+    assertEquals(LocationType.ONLINE, LocationType.fromDisplayValue("online"));
+  }
+
+  @Test
+  public void testLocationTypeFromDisplayValueEmptyString() {
+    assertEquals(LocationType.NONE, LocationType.fromDisplayValue(""));
+  }
+
+  @Test
+  public void testLocationTypeFromDisplayValueInvalidReturnsNone() {
+    assertEquals(LocationType.NONE, LocationType.fromDisplayValue("Room 101"));
+  }
+
+  @Test
+  public void testLocationTypeValuesLength() {
+    assertEquals(3, LocationType.values().length);
+  }
+
+  @Test
+  public void testLocationTypeValueOf() {
+    assertEquals(LocationType.NONE, LocationType.valueOf("NONE"));
+    assertEquals(LocationType.PHYSICAL, LocationType.valueOf("PHYSICAL"));
+    assertEquals(LocationType.ONLINE, LocationType.valueOf("ONLINE"));
   }
 
 }

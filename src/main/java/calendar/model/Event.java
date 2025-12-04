@@ -45,7 +45,7 @@ public interface Event {
    *
    * @return an Optional containing the location if present, empty Optional otherwise
    */
-  Optional<String> getLocation();
+  LocationType getLocation();
 
   /**
    * Gets the status of the event (PUBLIC or PRIVATE).

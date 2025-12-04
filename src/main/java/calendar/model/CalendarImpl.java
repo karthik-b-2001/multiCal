@@ -424,9 +424,7 @@ public class CalendarImpl implements Calendar {
       b.setDescription(e.getDescription().get());
     }
 
-    if (e.getLocation().isPresent()) {
-      b.setLocation(e.getLocation().get());
-    }
+    b.setLocation(e.getLocation());
 
     if (e.getSeriesId().isPresent()) {
       b.setSeriesId(e.getSeriesId().get());
@@ -449,7 +447,11 @@ public class CalendarImpl implements Calendar {
       b.setDescription(newValue.toString());
 
     } else if (property.equalsIgnoreCase("location")) {
-      b.setLocation(newValue.toString());
+      if (newValue instanceof LocationType) {
+        b.setLocation((LocationType) newValue);
+      } else {
+        throw new IllegalArgumentException("Invalid location type");
+      }
 
     } else if (property.equalsIgnoreCase("status")) {
       if (newValue instanceof EventStatus) {
@@ -481,7 +483,7 @@ public class CalendarImpl implements Calendar {
 
     b.setDescription(e.getDescription().orElse(null));
 
-    b.setLocation(e.getLocation().orElse(null));
+    b.setLocation(e.getLocation());
 
     b.setStatus(e.getStatus());
 
@@ -501,7 +503,7 @@ public class CalendarImpl implements Calendar {
         .setIsAllDay(e.isAllDayEvent()).setStatus(e.getStatus());
 
     b.setDescription(e.getDescription().orElse(null));
-    b.setLocation(e.getLocation().orElse(null));
+    b.setLocation(e.getLocation());
     return b.build();
   }
 

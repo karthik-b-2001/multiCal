@@ -12,6 +12,7 @@ import calendar.model.CalendarImpl;
 import calendar.model.EditSettings;
 import calendar.model.Event;
 import calendar.model.EventStatus;
+import calendar.model.LocationType;
 import calendar.model.exceptions.DuplicateEventException;
 import calendar.model.exceptions.EventNotFoundException;
 import calendar.model.exceptions.UnclearEventException;
@@ -699,13 +700,13 @@ public class CalendarImplTest {
     calendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
         LocalDateTime.of(2025, 5, 5, 11, 0), false);
 
-    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location", "Room 1",
-        EditSettings.SINGLE);
+    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        LocationType.PHYSICAL, EditSettings.SINGLE);
 
     calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "subject", "Updated",
         EditSettings.SINGLE);
 
-    assertEquals("Room 1", calendar.getAllEvents().get(0).getLocation().get());
+    assertEquals(LocationType.PHYSICAL, calendar.getAllEvents().get(0).getLocation());
   }
 
   @Test
@@ -771,11 +772,12 @@ public class CalendarImplTest {
     calendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
         LocalDateTime.of(2025, 5, 5, 11, 0), false);
 
-    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location", "Room 301",
-        EditSettings.SINGLE);
+    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        LocationType.ONLINE, EditSettings.SINGLE);
 
-    assertEquals("Room 301", calendar.getAllEvents().get(0).getLocation().get());
+    assertEquals(LocationType.ONLINE, calendar.getAllEvents().get(0).getLocation());
   }
+
 
   @Test
   public void testEditSingleEventStatus() throws Exception {
@@ -1163,5 +1165,35 @@ public class CalendarImplTest {
 
     Event event = calendar.getAllEvents().get(0);
     assertEquals(LocalTime.of(10, 0), event.getStartDateTime().toLocalTime());
+  }
+
+  @Test
+  public void testNewEventHasNoLocation() throws Exception {
+    calendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
+        LocalDateTime.of(2025, 5, 5, 11, 0), false);
+
+    assertEquals(LocationType.NONE, calendar.getAllEvents().get(0).getLocation());
+  }
+
+  @Test
+  public void testEditLocationToNone() throws Exception {
+    calendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
+        LocalDateTime.of(2025, 5, 5, 11, 0), false);
+
+    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        LocationType.PHYSICAL, EditSettings.SINGLE);
+    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        LocationType.NONE, EditSettings.SINGLE);
+
+    assertEquals(LocationType.NONE, calendar.getAllEvents().get(0).getLocation());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testEditLocationWithInvalidType() throws Exception {
+    calendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
+        LocalDateTime.of(2025, 5, 5, 11, 0), false);
+
+    calendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        "InvalidString", EditSettings.SINGLE);
   }
 }

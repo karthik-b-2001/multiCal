@@ -9,6 +9,7 @@ import calendar.model.CalendarImpl;
 import calendar.model.EditSettings;
 import calendar.model.Event;
 import calendar.model.EventStatus;
+import calendar.model.LocationType;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -113,17 +114,16 @@ public class IcalExporterTest {
     testCalendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
         LocalDateTime.of(2025, 5, 5, 11, 0), false);
     testCalendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
-        "location", "Room 301", EditSettings.SINGLE);
+        "location", LocationType.PHYSICAL, EditSettings.SINGLE);
 
     List<Event> events = testCalendar.getAllEvents();
     Path filePath = Paths.get("test-loc.ical");
     filesToCleanup.add(filePath);
 
-
     exporter.export(events, filePath, testCalendar);
 
     String content = Files.readString(filePath);
-    assertTrue(content.contains("LOCATION:Room 301"));
+    assertTrue(content.contains("LOCATION:Physical"));
   }
 
   @Test
@@ -433,20 +433,21 @@ public class IcalExporterTest {
   }
 
   @Test
-  public void testExportWithEmptyLocation() throws Exception {
+  public void testExportWithNoneLocation() throws Exception {
     testCalendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
         LocalDateTime.of(2025, 5, 5, 11, 0), false);
     testCalendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
-        "location", "", EditSettings.SINGLE);
+        "location", LocationType.NONE, EditSettings.SINGLE);
 
     List<Event> events = testCalendar.getAllEvents();
-    Path filePath = Paths.get("test-empty-loc.ical");
+    Path filePath = Paths.get("test-none-loc.ical");
     filesToCleanup.add(filePath);
 
     exporter.export(events, filePath, testCalendar);
 
     String content = Files.readString(filePath);
-    assertTrue(content.contains("LOCATION:"));
+    int locCount = content.split("LOCATION:").length - 1;
+    assertEquals(0, locCount);
   }
 
   @Test

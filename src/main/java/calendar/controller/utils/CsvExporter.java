@@ -2,6 +2,7 @@ package calendar.controller.utils;
 
 import calendar.model.Calendar;
 import calendar.model.Event;
+import calendar.model.LocationType;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -63,7 +64,7 @@ public class CsvExporter implements Exporter {
 
     sb.append(escapeCsv(event.getDescription().orElse(""))).append(",");
 
-    sb.append(escapeCsv(event.getLocation().orElse(""))).append(",");
+    sb.append(escapeCsv(event.getLocation().getDisplayValue())).append(",");
 
     sb.append(event.getStatus().toString().equals("PRIVATE") ? "True" : "False");
 

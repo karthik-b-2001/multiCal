@@ -1,6 +1,7 @@
 package calendar.view;
 
 import calendar.model.Event;
+import calendar.model.LocationType;
 import java.io.PrintStream;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -113,9 +114,9 @@ public class ConsoleView implements View {
     sb.append(" to ");
     sb.append(event.getEndDateTime().format(TIME_FORMATTER));
 
-    if (event.getLocation().isPresent()) {
+    if (event.getLocation() != LocationType.NONE) {
       sb.append(" at ");
-      sb.append(event.getLocation().get());
+      sb.append(event.getLocation().getDisplayValue());
     }
 
     return sb.toString();
@@ -137,9 +138,9 @@ public class ConsoleView implements View {
     sb.append(" at ");
     sb.append(event.getEndDateTime().format(TIME_FORMATTER));
 
-    if (event.getLocation().isPresent()) {
+    if (event.getLocation() != LocationType.NONE) {
       sb.append(" at ");
-      sb.append(event.getLocation().get());
+      sb.append(event.getLocation().getDisplayValue());
     }
 
     return sb.toString();

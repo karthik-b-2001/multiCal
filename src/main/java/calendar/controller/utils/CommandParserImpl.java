@@ -14,6 +14,7 @@ import calendar.controller.commands.ShowStatusCommand;
 import calendar.controller.commands.UseCalendarCommand;
 import calendar.model.EditSettings;
 import calendar.model.EventStatus;
+import calendar.model.LocationType;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -458,8 +459,9 @@ public class CommandParserImpl implements CommandParser {
     switch (property.toLowerCase()) {
       case "subject":
       case "description":
-      case "location":
         return valueStr;
+      case "location":
+        return parseLocationType(valueStr);
       case "start":
       case "end":
         return LocalDateTime.parse(valueStr, DATE_TIME_FORMATTER);
@@ -469,6 +471,23 @@ public class CommandParserImpl implements CommandParser {
         throw new IllegalArgumentException("Unknown property: " + property);
     }
   }
+
+  /**
+   * Parses location string to LocationType enum.
+   * Accepts: "physical", "online", "none", or empty string.
+   *
+   * @param value the location string
+   * @return the corresponding LocationType
+   */
+  private LocationType parseLocationType(String value) {
+    if (value.equalsIgnoreCase("physical")) {
+      return LocationType.PHYSICAL;
+    } else if (value.equalsIgnoreCase("online")) {
+      return LocationType.ONLINE;
+    }
+    return LocationType.NONE;
+  }
+
 
   /**
    * Parses print events on date command.
