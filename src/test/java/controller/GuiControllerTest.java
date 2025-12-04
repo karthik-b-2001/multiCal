@@ -12,6 +12,7 @@ import calendar.model.CalendarManager;
 import calendar.model.CalendarManagerImpl;
 import calendar.model.EditSettings;
 import calendar.model.Event;
+import calendar.model.LocationType;
 import java.awt.Color;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -191,11 +192,11 @@ public class GuiControllerTest {
     controller.createSingleEvent("Meeting", LocalDate.of(2025, 5, 5), LocalTime.of(10, 0),
         LocalTime.of(11, 0), false);
 
-    controller.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location", "Room 301",
-        EditSettings.SINGLE);
+    controller.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        LocationType.PHYSICAL, EditSettings.SINGLE);
 
     List<Event> events = controller.getEventsForDate(LocalDate.of(2025, 5, 5));
-    assertEquals("Room 301", events.get(0).getLocation().get());
+    assertEquals(LocationType.PHYSICAL, events.get(0).getLocation());
   }
 
   @Test

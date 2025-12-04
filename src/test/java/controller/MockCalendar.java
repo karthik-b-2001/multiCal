@@ -4,6 +4,7 @@ import calendar.model.Calendar;
 import calendar.model.EditSettings;
 import calendar.model.Event;
 import calendar.model.EventStatus;
+import calendar.model.LocationType;
 import calendar.model.exceptions.DuplicateEventException;
 import calendar.model.exceptions.EventNotFoundException;
 import calendar.model.exceptions.UnclearEventException;
@@ -223,7 +224,7 @@ public class MockCalendar implements Calendar {
     private final LocalDateTime endDateTime;
     private final boolean isAllDay;
     public String description;
-    public String location;
+    public LocationType location = LocationType.NONE;
     public EventStatus status = EventStatus.PUBLIC;
 
     /**
@@ -262,8 +263,8 @@ public class MockCalendar implements Calendar {
     }
 
     @Override
-    public Optional<String> getLocation() {
-      return Optional.ofNullable(location);
+    public LocationType getLocation() {
+      return location;
     }
 
     @Override

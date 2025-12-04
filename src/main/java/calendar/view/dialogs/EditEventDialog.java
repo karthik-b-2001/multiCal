@@ -3,12 +3,14 @@ package calendar.view.dialogs;
 import calendar.controller.GuiController;
 import calendar.model.EditSettings;
 import calendar.model.Event;
+import calendar.model.LocationType;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -113,16 +115,12 @@ public class EditEventDialog extends JDialog {
     label.setPreferredSize(new Dimension(120, 25));
     panel.add(label, BorderLayout.WEST);
 
-    locationCombo = new JComboBox<>(new String[] {"", "Physical", "Online"});
+    String[] locationOptions = Arrays.stream(LocationType.values())
+        .map(LocationType::getDisplayValue)
+        .toArray(String[]::new);
 
-    String existingLocation = event.getLocation().orElse("");
-    if (existingLocation.equalsIgnoreCase("Physical")) {
-      locationCombo.setSelectedItem("Physical");
-    } else if (existingLocation.equalsIgnoreCase("Online")) {
-      locationCombo.setSelectedItem("Online");
-    } else {
-      locationCombo.setSelectedIndex(0);
-    }
+    locationCombo = new JComboBox<>(locationOptions);
+    locationCombo.setSelectedItem(event.getLocation().getDisplayValue());
 
     panel.add(locationCombo, BorderLayout.CENTER);
 
@@ -251,9 +249,11 @@ public class EditEventDialog extends JDialog {
     }
 
     if (success) {
-      String newLocation = (String) locationCombo.getSelectedItem();
-      String originalLocation = event.getLocation().orElse("");
-      if (!newLocation.equals(originalLocation)) {
+      String selectedLocation = (String) locationCombo.getSelectedItem();
+      LocationType newLocation = LocationType.fromDisplayValue(selectedLocation);
+      LocationType originalLocation = event.getLocation();
+
+      if (newLocation != originalLocation) {
         if (!editEventProperty(currentSubject, currentStartDateTime, "location",
             newLocation, scope)) {
           success = false;

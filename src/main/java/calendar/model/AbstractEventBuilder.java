@@ -13,7 +13,7 @@ public abstract class AbstractEventBuilder<T extends AbstractEventBuilder<T>> {
   protected LocalDateTime startDateTime;
   protected LocalDateTime endDateTime;
   protected String description;
-  protected String location;
+  protected LocationType location;
   protected boolean isAllDay;
   protected EventStatus status;
   protected String seriesId;
@@ -92,7 +92,7 @@ public abstract class AbstractEventBuilder<T extends AbstractEventBuilder<T>> {
    * @param location the event location
    * @return this builder for method chaining
    */
-  public T setLocation(String location) {
+  public T setLocation(LocationType location) {
     this.location = location;
     return returnBuilder();
   }

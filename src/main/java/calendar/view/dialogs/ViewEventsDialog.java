@@ -2,6 +2,7 @@ package calendar.view.dialogs;
 
 import calendar.controller.GuiController;
 import calendar.model.Event;
+import calendar.model.LocationType;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -130,9 +131,9 @@ public class ViewEventsDialog extends JDialog {
     timeLabel.setFont(new Font("Arial", Font.PLAIN, 14));
     card.add(timeLabel);
 
-    if (event.getLocation().isPresent()) {
+    if (event.getLocation() != LocationType.NONE) {
       card.add(Box.createVerticalStrut(5));
-      JLabel locationLabel = new JLabel("Location: " + event.getLocation().get());
+      JLabel locationLabel = new JLabel("Location: " + event.getLocation().getDisplayValue());
       locationLabel.setFont(new Font("Arial", Font.PLAIN, 14));
       card.add(locationLabel);
     }

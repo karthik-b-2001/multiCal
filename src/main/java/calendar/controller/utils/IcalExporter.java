@@ -3,6 +3,7 @@ package calendar.controller.utils;
 import calendar.model.Calendar;
 import calendar.model.Event;
 import calendar.model.EventStatus;
+import calendar.model.LocationType;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -66,8 +67,8 @@ public class IcalExporter implements Exporter {
       writer.write("DESCRIPTION:" + escapeText(event.getDescription().get()) + "\n");
     }
 
-    if (event.getLocation().isPresent()) {
-      writer.write("LOCATION:" + escapeText(event.getLocation().get()) + "\n");
+    if (event.getLocation() != LocationType.NONE) {
+      writer.write("LOCATION:" + escapeText(event.getLocation().getDisplayValue()) + "\n");
     }
 
     writer.write("CLASS:" + (event.getStatus() == EventStatus.PRIVATE ? "PRIVATE" : "PUBLIC")

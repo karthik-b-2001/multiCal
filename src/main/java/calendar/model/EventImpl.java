@@ -15,7 +15,7 @@ public class EventImpl implements Event {
   private final LocalDateTime startDateTime;
   private final LocalDateTime endDateTime;
   private final String description;
-  private final String location;
+  private final LocationType location;
   private final EventStatus status;
   private final String seriesId;
   private final boolean isAllDay;
@@ -33,12 +33,12 @@ public class EventImpl implements Event {
    * @param isAllDay      flag indicating if this is an all-day event
    */
   EventImpl(String subject, LocalDateTime startDateTime, LocalDateTime endDateTime,
-            String description, String location, EventStatus status, String seriesId,
+            String description, LocationType location, EventStatus status, String seriesId,
             boolean isAllDay) {
     this.subject = subject;
     this.status = status;
     this.description = description;
-    this.location = location;
+    this.location = location != null ? location : LocationType.NONE;
     this.seriesId = seriesId;
     this.isAllDay = isAllDay;
 
@@ -58,7 +58,6 @@ public class EventImpl implements Event {
       this.endDateTime = endDateTime;
     }
   }
-
 
   @Override
   public String getSubject() {
@@ -81,8 +80,8 @@ public class EventImpl implements Event {
   }
 
   @Override
-  public Optional<String> getLocation() {
-    return Optional.ofNullable(location);
+  public LocationType getLocation() {
+    return this.location;
   }
 
   @Override
@@ -105,7 +104,6 @@ public class EventImpl implements Event {
     return Optional.ofNullable(seriesId);
   }
 
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -122,19 +120,16 @@ public class EventImpl implements Event {
 
   @Override
   public Event copyWithNewTimes(LocalDateTime newStart, LocalDateTime newEnd) {
-    EventBuilder b = new EventBuilder().setSubject(this.subject).setStartDateTime(newStart)
+    return new EventBuilder().setSubject(this.subject).setStartDateTime(newStart)
         .setEndDateTime(newEnd).setDescription(this.description).setLocation(this.location)
-        .setStatus(this.status).setSeriesId(this.seriesId).setIsAllDay(this.isAllDay);
-
-    return b.build();
+        .setStatus(this.status).setSeriesId(this.seriesId).setIsAllDay(this.isAllDay).build();
   }
 
   @Override
   public Event copyWithSeriesId(String newSeriesId) {
-    return new EventImpl.EventBuilder().setSubject(this.subject)
-        .setStartDateTime(this.startDateTime).setEndDateTime(this.endDateTime)
-        .setDescription(this.description).setLocation(this.location).setStatus(this.status)
-        .setSeriesId(newSeriesId)  // NEW series ID (can be null)
+    return new EventBuilder().setSubject(this.subject).setStartDateTime(this.startDateTime)
+        .setEndDateTime(this.endDateTime).setDescription(this.description)
+        .setLocation(this.location).setStatus(this.status).setSeriesId(newSeriesId)
         .setIsAllDay(this.isAllDay).build();
   }
 
@@ -146,7 +141,6 @@ public class EventImpl implements Event {
   /**
    * Builder class for constructing EventImpl instances.
    */
-
   protected static class EventBuilder extends AbstractEventBuilder<EventBuilder> {
 
     @Override

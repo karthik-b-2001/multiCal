@@ -9,6 +9,7 @@ import calendar.model.Calendar;
 import calendar.model.CalendarImpl;
 import calendar.model.EditSettings;
 import calendar.model.Event;
+import calendar.model.LocationType;
 import calendar.view.ConsoleView;
 import calendar.view.View;
 import java.io.ByteArrayOutputStream;
@@ -117,14 +118,14 @@ public class ViewTest {
     testCalendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
         LocalDateTime.of(2025, 5, 5, 11, 0), false);
 
-    testCalendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location", "Room 301",
-        EditSettings.SINGLE);
+    testCalendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        LocationType.PHYSICAL, EditSettings.SINGLE);
 
     List<Event> events = testCalendar.getEventOnDate(LocalDate.of(2025, 5, 5));
     view.displayEventsOnDate(events, "2025-05-05");
 
     String output = outputStream.toString();
-    assertTrue(output.contains("Room 301"));
+    assertTrue(output.contains("Physical"));
   }
 
   @Test
@@ -159,7 +160,7 @@ public class ViewTest {
         LocalDateTime.of(2025, 5, 7, 17, 0), false);
 
     testCalendar.editEvent("Conference", LocalDateTime.of(2025, 5, 5, 9, 0), "location",
-        "Convention Center", EditSettings.SINGLE);
+        LocationType.PHYSICAL, EditSettings.SINGLE);
 
     List<Event> events = testCalendar.getEventsInRange(LocalDateTime.of(2025, 5, 1, 0, 0),
         LocalDateTime.of(2025, 5, 10, 23, 59));
@@ -167,7 +168,7 @@ public class ViewTest {
     view.displayEventsInRange(events);
 
     String output = outputStream.toString();
-    assertTrue(output.contains("Convention Center"));
+    assertTrue(output.contains("Physical"));
   }
 
   @Test
@@ -316,7 +317,7 @@ public class ViewTest {
         LocalDateTime.of(2025, 5, 10, 16, 45), false);
 
     testCalendar.editEvent("Workshop", LocalDateTime.of(2025, 5, 10, 14, 30), "location",
-        "Building A", EditSettings.SINGLE);
+        LocationType.ONLINE, EditSettings.SINGLE);
 
     List<Event> events = testCalendar.getEventsInRange(LocalDateTime.of(2025, 5, 1, 0, 0),
         LocalDateTime.of(2025, 5, 15, 23, 59));
@@ -328,7 +329,7 @@ public class ViewTest {
     assertTrue(output.contains("2025-05-10"));
     assertTrue(output.contains("14:30"));
     assertTrue(output.contains("16:45"));
-    assertTrue(output.contains("at Building A"));
+    assertTrue(output.contains("at Online"));
   }
 
   @Test
@@ -339,8 +340,8 @@ public class ViewTest {
     testCalendar.createAndAddEvent("Lunch", LocalDateTime.of(2025, 5, 5, 12, 0),
         LocalDateTime.of(2025, 5, 5, 13, 0), false);
 
-    testCalendar.editEvent("Lunch", LocalDateTime.of(2025, 5, 5, 12, 0), "location", "Cafeteria",
-        EditSettings.SINGLE);
+    testCalendar.editEvent("Lunch", LocalDateTime.of(2025, 5, 5, 12, 0), "location",
+        LocationType.PHYSICAL, EditSettings.SINGLE);
 
     testCalendar.createAndAddEvent("Afternoon Session", LocalDateTime.of(2025, 5, 5, 14, 0),
         LocalDateTime.of(2025, 5, 5, 16, 0), false);
@@ -352,7 +353,7 @@ public class ViewTest {
     assertTrue(output.contains("Morning Meeting"));
     assertTrue(output.contains("Lunch"));
     assertTrue(output.contains("Afternoon Session"));
-    assertTrue(output.contains("Cafeteria"));
+    assertTrue(output.contains("Physical"));
   }
 
   @Test
@@ -364,7 +365,7 @@ public class ViewTest {
         LocalDateTime.of(2025, 5, 6, 15, 0), false);
 
     testCalendar.editEvent("Day 2 Event", LocalDateTime.of(2025, 5, 6, 14, 0), "location",
-        "Room 202", EditSettings.SINGLE);
+        LocationType.ONLINE, EditSettings.SINGLE);
 
     List<Event> events = testCalendar.getEventsInRange(LocalDateTime.of(2025, 5, 1, 0, 0),
         LocalDateTime.of(2025, 5, 10, 23, 59));
@@ -376,7 +377,7 @@ public class ViewTest {
     assertTrue(output.contains("Day 2 Event"));
     assertTrue(output.contains("2025-05-05"));
     assertTrue(output.contains("2025-05-06"));
-    assertTrue(output.contains("Room 202"));
+    assertTrue(output.contains("Online"));
   }
 
   @Test
@@ -385,7 +386,7 @@ public class ViewTest {
         LocalDateTime.of(2025, 12, 25, 11, 0), false);
 
     testCalendar.editEvent("Simple Event", LocalDateTime.of(2025, 12, 25, 10, 0), "location",
-        "Somewhere", EditSettings.SINGLE);
+        LocationType.PHYSICAL, EditSettings.SINGLE);
 
     testCalendar.editEvent("Simple Event", LocalDateTime.of(2025, 12, 25, 10, 0), "description",
         "Some description", EditSettings.SINGLE);

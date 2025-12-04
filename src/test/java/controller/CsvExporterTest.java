@@ -11,6 +11,7 @@ import calendar.model.CalendarImpl;
 import calendar.model.EditSettings;
 import calendar.model.Event;
 import calendar.model.EventStatus;
+import calendar.model.LocationType;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -141,8 +142,8 @@ public class CsvExporterTest {
     testCalendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
         LocalDateTime.of(2025, 5, 5, 11, 0), false);
 
-    testCalendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location", "Room 301",
-        EditSettings.SINGLE);
+    testCalendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
+        LocationType.PHYSICAL, EditSettings.SINGLE);
 
     List<Event> events = testCalendar.getAllEvents();
     Path filePath = Paths.get("test-loc.csv");
@@ -151,7 +152,7 @@ public class CsvExporterTest {
     exporter.export(events, filePath, testCalendar);
 
     List<String> lines = Files.readAllLines(filePath);
-    assertTrue(lines.get(1).contains("Room 301"));
+    assertTrue(lines.get(1).contains("Physical"));
   }
 
   @Test
@@ -413,21 +414,21 @@ public class CsvExporterTest {
   }
 
   @Test
-  public void testEscapeNewlineInLocation() throws Exception {
+  public void testExportEventWithOnlineLocation() throws Exception {
     testCalendar.createAndAddEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0),
         LocalDateTime.of(2025, 5, 5, 11, 0), false);
 
     testCalendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
-        "Building A\nFloor 3", EditSettings.SINGLE);
+        LocationType.ONLINE, EditSettings.SINGLE);
 
     List<Event> events = testCalendar.getAllEvents();
-    Path filePath = Paths.get("test-escape-newline.csv");
+    Path filePath = Paths.get("test-online-loc.csv");
     filesToCleanup.add(filePath);
 
     exporter.export(events, filePath, testCalendar);
 
     String content = Files.readString(filePath);
-    assertTrue(content.contains("\"Building A\nFloor 3\""));
+    assertTrue(content.contains("Online"));
   }
 
   @Test
@@ -439,7 +440,7 @@ public class CsvExporterTest {
         "Simple description", EditSettings.SINGLE);
 
     testCalendar.editEvent("SimpleMeeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location",
-        "Room101", EditSettings.SINGLE);
+        LocationType.PHYSICAL, EditSettings.SINGLE);
 
     List<Event> events = testCalendar.getAllEvents();
     Path filePath = Paths.get("test-no-escape.csv");
@@ -451,7 +452,6 @@ public class CsvExporterTest {
     String eventLine = lines.get(1);
     assertFalse(eventLine.contains("\"SimpleMeeting\""));
     assertFalse(eventLine.contains("\"Simple description\""));
-    assertFalse(eventLine.contains("\"Room101\""));
   }
 
   @Test
@@ -514,13 +514,9 @@ public class CsvExporterTest {
     testCalendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "description", "",
         EditSettings.SINGLE);
 
-    testCalendar.editEvent("Meeting", LocalDateTime.of(2025, 5, 5, 10, 0), "location", "",
-        EditSettings.SINGLE);
-
     List<Event> events = testCalendar.getAllEvents();
     Path filePath = Paths.get("test-empty-strings.csv");
     filesToCleanup.add(filePath);
-
 
     exporter.export(events, filePath, testCalendar);
 
